@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skinimalist LP案（スマホ特化／PC対応）｜エステティック通信</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── 白ベースの明るい配色（現行LPの地色 rgb(252,251,245) に準拠） ── */
+  --paper:   #fdfcf9;
+  --white:   #ffffff;
+  --cream:   #f6f2ea;
+  --sand:    #eee7db;
+  --navy:    #1a2740;
+  --navy-so: #43536e;
+  --gold:    #c9a96e;
+  --gold-d:  #a8863f;
+  --gold-lt: #f0e4cc;
+  --text:    #2f3440;
+  --muted:   #7a8290;
+  --line:    #e6e0d5;
+  --red:     #c0563f;
+  --green:   #2f8f63;
+  --linegr:  #06c755;
+  /* 注釈カラー */
+  --mk:      #2563eb;
+  --mk-new:  #7c3aed;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  color: var(--text);
+  line-height: 1.85;
+  font-size: 15px;
+  background: var(--sand);
+  -webkit-text-size-adjust: 100%;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { text-decoration: none; color: inherit; }
+
+/* ══════════ PC背景（midacy方式：中央カラムの背後に固定背景） ══════════ */
+#bg-deco {
+  position: fixed; inset: 0; z-index: 0; display: none;
+  background:
+    radial-gradient(circle at 18% 28%, rgba(201,169,110,.16) 0%, transparent 42%),
+    radial-gradient(circle at 82% 72%, rgba(26,39,64,.10) 0%, transparent 45%),
+    linear-gradient(150deg, #f7f3ec 0%, #ece5d9 55%, #e4dbcc 100%);
+}
+#bg-deco .bg-ttl {
+  position: absolute; top: 50%; left: 40px; transform: translateY(-50%);
+  writing-mode: vertical-rl; font-size: 13px; letter-spacing: .42em;
+  color: rgba(26,39,64,.28); font-weight: 700;
+}
+#bg-deco .bg-ttl2 {
+  position: absolute; top: 50%; right: 40px; transform: translateY(-50%);
+  writing-mode: vertical-rl; font-size: 13px; letter-spacing: .42em;
+  color: rgba(26,39,64,.28); font-weight: 700;
+}
+
+/* ══════════ 本体：スマホ幅カラムを中央寄せ ══════════ */
+#wrap {
+  max-width: 480px; margin: 0 auto; background: var(--paper);
+  position: relative; z-index: 1;
+  box-shadow: 0 0 50px rgba(60,50,35,.16);
+  padding-bottom: 76px;
+}
+
+/* ══════════ スクロール進捗バー ══════════ */
+#prog {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%; z-index: 1200;
+  background: linear-gradient(90deg, var(--gold), var(--gold-d));
+  transition: width .1s linear;
+}
+
+/* ══════════ セクション ══════════ */
+.sec { padding: 46px 20px; position: relative; }
+.sec.paper { background: var(--paper); }
+.sec.white { background: var(--white); }
+.sec.cream { background: var(--cream); }
+.sec.navy  { background: var(--navy); color: var(--white); }
+
+.sec-tag {
+  font-size: 10px; letter-spacing: .2em; font-weight: 700;
+  color: var(--gold-d); text-transform: uppercase; text-align: center; margin-bottom: 8px;
+}
+.sec.navy .sec-tag { color: var(--gold); }
+.sec-ttl {
+  font-size: 21px; font-weight: 800; line-height: 1.5;
+  text-align: center; color: var(--navy); margin-bottom: 6px;
+}
+.sec.navy .sec-ttl { color: var(--white); }
+.sec-ttl em { font-style: normal; color: var(--gold-d); }
+.sec.navy .sec-ttl em { color: var(--gold); }
+.sec-ttl mark {
+  background: linear-gradient(transparent 62%, var(--gold-lt) 62%);
+  color: inherit; padding: 0 2px;
+}
+.sec-lead {
+  font-size: 13.5px; color: var(--muted); text-align: center;
+  margin-bottom: 26px; line-height: 1.95;
+}
+.sec.navy .sec-lead { color: rgba(255,255,255,.75); }
+.sec-bar { width: 36px; height: 3px; background: var(--gold); margin: 13px auto 24px; }
+
+/* ══════════ スクロールで浮き上がる演出 ══════════
+   .reveal は既定で「表示済み」。JSが動く環境でのみ .js-anim が付き、
+   初期状態を透明にして演出する。JSが動かなくても内容は必ず見える。 */
+body.js-anim .reveal { opacity: 0; transform: translateY(22px); }
+body.js-anim .reveal.on {
+  opacity: 1; transform: none;
+  transition: opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1);
+}
+
+/* ══════════ 注釈：画像仕様 ══════════ */
+.anno-switch {
+  position: fixed; top: 9px; left: 50%; transform: translateX(-50%);
+  z-index: 3000; background: var(--mk); color: #fff; border: none;
+  padding: 8px 15px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  cursor: pointer; box-shadow: 0 3px 14px rgba(37,99,235,.45); font-family: inherit; white-space: nowrap;
+}
+.anno-switch.off { background: #94a3b8; }
+.img-slot { position: relative; }
+.img-slot .spec {
+  position: absolute; top: 6px; right: 6px; z-index: 20;
+  background: rgba(37,99,235,.95); color: #fff; font-size: 9.5px; font-weight: 700;
+  line-height: 1.45; padding: 4px 8px; border-radius: 4px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.28); text-align: left; max-width: 78%;
+}
+.img-slot .spec .badge {
+  display: inline-block; font-size: 8.5px; padding: 1px 5px; border-radius: 2px; margin-right: 4px;
+}
+.badge-keep { background: #16a34a; } .badge-res { background: #ea580c; }
+.badge-new  { background: #9333ea; } .badge-del { background: #dc2626; }
+.img-slot .spec-detail {
+  display: none; margin-top: 5px; padding-top: 5px;
+  border-top: 1px solid rgba(255,255,255,.35); font-weight: 400; font-size: 9.5px;
+}
+.img-slot .spec.open .spec-detail { display: block; }
+.img-slot::after {
+  content: ""; position: absolute; inset: 0; z-index: 10; pointer-events: none;
+  border: 2px dashed rgba(37,99,235,.75);
+}
+
+/* ══════════ 注釈：新規提案（現行LPに無い内容） ══════════ */
+.newnote {
+  background: #f5f3ff; border: 2px dashed #a78bfa; border-radius: 8px;
+  padding: 13px 15px; margin: 16px 0 0; font-size: 11.5px; color: #4c1d95; line-height: 1.8;
+}
+.newnote b { display: block; color: #6d28d9; font-size: 12px; margin-bottom: 4px; }
+.newnote .src { display: block; margin-top: 6px; color: #7c3aed; font-size: 10.5px; }
+.todo {
+  background: #fffbeb; border: 2px dashed #f59e0b; border-radius: 8px;
+  padding: 13px 15px; margin: 14px 0 0; font-size: 11.5px; color: #78350f; line-height: 1.8;
+}
+.todo b { display: block; color: #b45309; font-size: 12px; margin-bottom: 4px; }
+.todo ul, .newnote ul { margin: 6px 0 0 16px; }
+.todo li, .newnote li { margin-bottom: 3px; }
+body.no-anno .img-slot::after, body.no-anno .img-slot .spec,
+body.no-anno .todo, body.no-anno .newnote, body.no-anno #spec-summary { display: none; }
+
+#spec-summary { background: #0f172a; color: #e2e8f0; padding: 15px 17px; font-size: 11px; }
+#spec-summary summary {
+  cursor: pointer; font-weight: 700; color: #fcd9a0; font-size: 12.5px;
+  list-style: none; display: flex; align-items: center; gap: 8px;
+}
+#spec-summary summary::-webkit-details-marker { display: none; }
+#spec-summary summary::after { content: "＋"; margin-left: auto; font-size: 15px; }
+#spec-summary[open] summary::after { content: "−"; }
+#spec-summary .note { color: #94a3b8; margin: 10px 0 12px; line-height: 1.75; }
+#spec-summary table { width: 100%; border-collapse: collapse; font-size: 9.5px; }
+#spec-summary th, #spec-summary td {
+  border: 1px solid rgba(255,255,255,.14); padding: 5px 6px; text-align: left; vertical-align: top;
+}
+#spec-summary th { background: rgba(255,255,255,.07); color: #cbd5e1; }
+.s-keep { color: #4ade80; font-weight: 700; } .s-res { color: #fb923c; font-weight: 700; }
+.s-new  { color: #c084fc; font-weight: 700; } .s-del { color: #f87171; font-weight: 700; }
+
+/* ══════════ ヘッダー ══════════ */
+#hd {
+  position: sticky; top: 0; z-index: 900; background: rgba(253,252,249,.96);
+  backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: space-between;
+  padding: 0 14px; height: 54px; border-bottom: 1px solid var(--line);
+}
+#hd .logo { color: var(--navy); font-weight: 800; font-size: 15px; letter-spacing: .03em; }
+#hd .logo span { color: var(--gold-d); }
+#hd .hd-btn {
+  background: var(--navy); color: #fff; font-size: 11.5px; font-weight: 800;
+  padding: 8px 15px; border-radius: 4px;
+}
+
+/* ══════════ ① FV ══════════ */
+#fv { position: relative; min-height: 600px; display: flex; align-items: flex-end; background: var(--cream); }
+#fv .bg {
+  position: absolute; inset: 0;
+  background: url('https://fan.liberta.net/skinimalist/img/top_sp.jpg') center 12% / cover;
+}
+#fv .ov {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,.30) 0%, rgba(253,252,249,.72) 46%, rgba(253,252,249,.97) 78%, var(--paper) 100%);
+}
+#fv .inner { position: relative; z-index: 5; padding: 24px 20px 30px; width: 100%; }
+#fv .eyebrow {
+  display: inline-block; background: var(--navy); color: var(--gold-lt);
+  font-size: 9.5px; letter-spacing: .16em; padding: 5px 11px; margin-bottom: 14px; border-radius: 2px;
+}
+#fv h1 { font-size: 16px; font-weight: 700; line-height: 1.75; color: var(--navy); margin-bottom: 12px; }
+#fv .big {
+  font-size: 46px; font-weight: 900; color: var(--navy); line-height: 1;
+  letter-spacing: -.03em; margin-bottom: 2px;
+}
+#fv .big span { color: var(--gold-d); }
+#fv .big small { font-size: 18px; font-weight: 800; margin-left: 2px; color: var(--navy); }
+#fv .big-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+#fv .big-sub b { color: var(--navy); }
+#fv .fv-note { font-size: 10.5px; color: var(--muted); margin-top: 13px; line-height: 1.7; }
+
+/* ══════════ CTAボタン ══════════ */
+.btn {
+  display: block; width: 100%; text-align: center; border-radius: 7px;
+  font-weight: 800; letter-spacing: .02em; padding: 16px 12px; font-size: 15px;
+  border: none; cursor: pointer; font-family: inherit; line-height: 1.4;
+  position: relative; overflow: hidden;
+}
+.btn .sm { display: block; font-size: 10.5px; font-weight: 600; opacity: .8; margin-top: 2px; }
+.btn-main {
+  background: linear-gradient(180deg, #d9bc86 0%, var(--gold) 100%);
+  color: #3b2f16; box-shadow: 0 5px 16px rgba(201,169,110,.45);
+}
+.btn-navy {
+  background: linear-gradient(180deg, var(--navy-so) 0%, var(--navy) 100%);
+  color: #fff; box-shadow: 0 5px 16px rgba(26,39,64,.3);
+}
+.btn-line { background: var(--linegr); color: #fff; box-shadow: 0 5px 16px rgba(6,199,85,.28); }
+.btn + .btn { margin-top: 10px; }
+/* 光沢が走るギミック（問い合わせ強調） */
+.btn.shine::before {
+  content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+  animation: shine 3.4s ease-in-out infinite;
+}
+@keyframes shine { 0% { left: -60%; } 42%, 100% { left: 130%; } }
+@media (prefers-reduced-motion: reduce) { .btn.shine::before { animation: none; } }
+
+/* ══════════ ② KPI ══════════ */
+#kpi { background: var(--navy); padding: 0; }
+#kpi .grid { display: grid; grid-template-columns: 1fr 1fr; }
+#kpi .cell {
+  padding: 22px 10px; text-align: center;
+  border-right: 1px solid rgba(255,255,255,.09); border-bottom: 1px solid rgba(255,255,255,.09);
+}
+#kpi .cell:nth-child(2n) { border-right: none; }
+#kpi .cell:nth-child(n+3) { border-bottom: none; }
+#kpi .n { font-size: 33px; font-weight: 900; color: var(--gold); line-height: 1; }
+#kpi .n u { font-size: 14px; font-weight: 500; text-decoration: none; margin-left: 1px; }
+#kpi .l { font-size: 10.5px; color: rgba(255,255,255,.68); line-height: 1.55; margin-top: 7px; }
+#kpi .cap { text-align: center; font-size: 10px; color: rgba(255,255,255,.42); padding: 0 20px 15px; }
+
+/* ══════════ ③ お悩み ══════════ */
+.worry { display: grid; gap: 9px; }
+.worry li {
+  list-style: none; background: var(--white); border: 1px solid var(--line); border-radius: 8px;
+  padding: 14px 16px; font-size: 13.5px; font-weight: 600; color: var(--navy);
+  display: flex; gap: 10px; align-items: flex-start; line-height: 1.65;
+}
+.worry li::before { content: "✓"; color: var(--red); font-weight: 900; flex-shrink: 0; font-size: 15px; }
+.worry-end { text-align: center; font-size: 15px; font-weight: 800; color: var(--navy); margin-top: 22px; line-height: 1.75; }
+.worry-end mark { background: linear-gradient(transparent 60%, var(--gold-lt) 60%); }
+
+/* ══════════ ④ 課題再定義 ══════════ */
+.bars { margin: 22px 0 18px; }
+.bar-row { margin-bottom: 17px; }
+.bar-lb { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 6px; display: flex; justify-content: space-between; }
+.bar-lb span:last-child { color: var(--gold-d); font-weight: 800; }
+.bar-tr { background: var(--sand); border-radius: 4px; height: 26px; overflow: hidden; }
+/* 幅の正解値はHTML側のinline styleが持つ。演出はkeyframesで0から動かすだけなので、
+   アニメが走らなくても・途中で止まっても、最終的な幅は必ず正しい値に戻る。 */
+.bar-fl { height: 100%; border-radius: 4px; }
+@keyframes barGrow { from { width: 0; } }
+body.js-anim .bar-fl.growing { animation: barGrow 1.2s cubic-bezier(.22,1,.36,1); }
+.bar-fl.cap  { background: linear-gradient(90deg, #b3b8c2, #c9cdd6); }
+.bar-fl.grow { background: linear-gradient(90deg, var(--gold-d), var(--gold)); }
+.bar-note { font-size: 10.5px; color: var(--muted); margin-top: 5px; line-height: 1.65; }
+.insight {
+  background: var(--white); border: 2px solid var(--gold); border-radius: 8px;
+  padding: 17px; font-size: 13.5px; line-height: 1.9; color: var(--navy); text-align: center; font-weight: 600;
+}
+.insight b { color: var(--gold-d); font-size: 15px; }
+
+/* ══════════ ⑤ コンセプト ══════════ */
+.hero-img { border-radius: 10px; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--line); }
+.concept-badges { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; margin-top: 18px; }
+.concept-badges span {
+  border: 1px solid var(--gold); color: var(--gold-d); background: var(--white);
+  font-size: 10.5px; padding: 5px 11px; border-radius: 2px; font-weight: 700;
+}
+
+/* ══════════ CTAブロック ══════════ */
+.cta-block { padding: 36px 20px; text-align: center; background: var(--cream); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.cta-block.dark { background: linear-gradient(160deg, var(--navy) 0%, #101c30 100%); border: none; color: #fff; }
+.cta-block .ct { font-size: 19px; font-weight: 800; line-height: 1.55; margin-bottom: 8px; color: var(--navy); }
+.cta-block.dark .ct { color: #fff; }
+.cta-block .ct em { font-style: normal; color: var(--gold-d); }
+.cta-block.dark .ct em { color: var(--gold); }
+.cta-block .cl { font-size: 12.5px; color: var(--muted); margin-bottom: 20px; line-height: 1.85; }
+.cta-block.dark .cl { color: rgba(255,255,255,.75); }
+.cta-block .cn { font-size: 10.5px; color: var(--muted); margin-top: 12px; line-height: 1.65; }
+.cta-block.dark .cn { color: rgba(255,255,255,.5); }
+.cta-merit { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+.cta-merit span {
+  background: var(--white); border: 1px solid var(--gold); color: var(--gold-d);
+  font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 700;
+}
+.cta-block.dark .cta-merit span { background: rgba(255,255,255,.1); border-color: rgba(201,169,110,.5); color: var(--gold-lt); }
+.cta-block.big { padding: 48px 20px; }
+.cta-block.big .ct { font-size: 23px; }
+
+/* ══════════ ⑦ 3つの売れる ══════════ */
+.pts { display: grid; gap: 15px; }
+.pt { background: var(--white); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.pt-hd {
+  background: var(--navy); color: #fff; padding: 10px 14px;
+  font-size: 11px; letter-spacing: .1em; font-weight: 700; display: flex; align-items: center; gap: 8px;
+}
+.pt-hd i { color: var(--gold); font-style: normal; font-weight: 900; font-size: 14px; }
+.pt-bd { padding: 15px; display: flex; gap: 13px; align-items: flex-start; }
+.pt-bd .ico { width: 74px; flex-shrink: 0; border-radius: 6px; overflow: hidden; background: var(--cream); }
+.pt-ttl { font-size: 14.5px; font-weight: 800; color: var(--navy); line-height: 1.45; margin-bottom: 6px; }
+.pt-tx { font-size: 12px; color: var(--muted); line-height: 1.8; }
+.pt-tag {
+  display: inline-block; background: var(--cream); color: var(--navy);
+  font-size: 10px; padding: 2px 7px; border-radius: 3px; margin: 8px 4px 0 0;
+}
+
+/* ══════════ ⑧ 製品 ══════════ */
+.prods { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.prod { background: var(--white); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+.prod .ph { background: var(--cream); padding: 10px; }
+.prod .ph img { aspect-ratio: 1/1; object-fit: contain; width: 100%; }
+.prod .in { padding: 10px 11px 8px; flex: 1; display: flex; flex-direction: column; }
+.prod .cat { font-size: 9px; color: var(--gold-d); font-weight: 700; }
+.prod .nm { font-size: 11.5px; font-weight: 800; color: var(--navy); line-height: 1.4; margin: 3px 0 4px; }
+.prod .pr { font-size: 13px; font-weight: 800; color: var(--navy); }
+.prod .pr small { font-size: 9px; color: var(--muted); font-weight: 400; }
+.prod .cc { font-size: 9.5px; color: var(--muted); margin-top: 4px; line-height: 1.55; }
+.prod .db {
+  margin-top: auto; background: var(--navy); color: #fff; border: none;
+  padding: 9px; font-size: 10.5px; font-weight: 700; cursor: pointer; font-family: inherit;
+}
+.merit-strip {
+  background: var(--white); border: 2px solid var(--gold); border-radius: 8px; padding: 16px;
+  margin-top: 18px; font-size: 13px; line-height: 1.9; text-align: center; color: var(--navy);
+}
+.merit-strip b { color: var(--gold-d); }
+.concerns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
+.concern { border-radius: 6px; overflow: hidden; background: var(--white); border: 1px solid var(--line); }
+.concern img { width: 100%; aspect-ratio: 758/432; object-fit: cover; }
+.concern .cp { text-align: center; font-size: 10.5px; font-weight: 700; color: var(--navy); padding: 5px 4px; }
+
+/* ══════════ ⑨ シミュレーション ══════════ */
+.sim { background: var(--white); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.sim-hd { background: var(--navy); color: #fff; text-align: center; padding: 12px; font-size: 12.5px; font-weight: 700; }
+.sim-bd { padding: 16px; }
+.sim-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.sim-row:last-of-type { border-bottom: none; }
+.sim-row .k { color: var(--muted); }
+.sim-row .v { font-weight: 800; color: var(--navy); font-size: 15px; }
+.sim-row.total { background: var(--cream); margin: 8px -16px -16px; padding: 14px 16px; }
+.sim-row.total .k { color: var(--navy); font-weight: 700; }
+.sim-row.total .v { color: var(--gold-d); font-size: 20px; }
+.sim-q { color: #ea580c; font-weight: 800; }
+
+/* ══════════ ⑪ サポート ══════════ */
+.sup { display: grid; gap: 9px; }
+.sup-item { background: var(--white); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; }
+.sup-item .no {
+  width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: #3b2f16;
+  font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sup-item .st { font-size: 13px; font-weight: 800; color: var(--navy); margin-bottom: 3px; }
+.sup-item .sx { font-size: 11.5px; color: var(--muted); line-height: 1.75; }
+.ph-slot {
+  background: repeating-linear-gradient(45deg, #f5f2ec, #f5f2ec 10px, #ece7dd 10px, #ece7dd 20px);
+  border: 2px dashed #c4baa8; border-radius: 8px; aspect-ratio: 16/9;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 16px; margin-top: 14px;
+}
+.ph-slot .pt2 { font-size: 12.5px; font-weight: 800; color: #8a7f6c; margin-bottom: 4px; }
+.ph-slot .px { font-size: 10.5px; color: #a89d88; line-height: 1.65; }
+
+/* ══════════ ⑫ 声 ══════════ */
+.voices { display: grid; gap: 11px; }
+.voice { background: var(--white); border-radius: 10px; padding: 16px; border-left: 4px solid var(--gold); border-top: 1px solid var(--line); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.voice .vh { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+.voice .av {
+  width: 40px; height: 40px; border-radius: 50%; background: var(--cream);
+  display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; border: 1px dashed #c4baa8;
+}
+.voice .vn { font-size: 12px; font-weight: 800; color: var(--navy); line-height: 1.4; }
+.voice .vm { font-size: 10px; color: var(--muted); }
+.voice .vt { font-size: 12.5px; color: var(--text); line-height: 1.85; }
+.voice .vr { margin-top: 10px; background: var(--cream); border-radius: 6px; padding: 8px 10px; font-size: 11.5px; font-weight: 700; color: var(--navy); text-align: center; }
+.voice .vr b { color: var(--gold-d); font-size: 14px; }
+
+/* ══════════ ⑬ フロー ══════════ */
+.flow { position: relative; padding-left: 6px; }
+.flow-step { display: flex; gap: 14px; position: relative; padding-bottom: 24px; }
+.flow-step:last-child { padding-bottom: 0; }
+.flow-step .ln { position: absolute; left: 17px; top: 38px; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--gold), rgba(201,169,110,.2)); }
+.flow-step:last-child .ln { display: none; }
+.flow-step .no {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--navy); color: var(--gold);
+  font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; border: 2px solid var(--gold); z-index: 2; position: relative;
+}
+.flow-step .ft { font-size: 14px; font-weight: 800; color: var(--navy); margin-bottom: 3px; }
+.flow-step .fx { font-size: 12px; color: var(--muted); line-height: 1.8; }
+.flow-step .fd {
+  display: inline-block; background: var(--gold-lt); color: #6b5320;
+  font-size: 10px; font-weight: 800; padding: 2px 9px; border-radius: 10px; margin-top: 6px;
+}
+
+/* ══════════ ⑭ 宣言 ══════════ */
+.promise { background: var(--white); border: 2px solid var(--gold); border-radius: 10px; padding: 24px 18px; text-align: center; }
+.promise .pi { font-size: 32px; margin-bottom: 8px; }
+.promise .pt3 { font-size: 18px; font-weight: 900; color: var(--navy); line-height: 1.55; margin-bottom: 12px; }
+.promise .px2 { font-size: 12.5px; color: var(--muted); line-height: 1.9; }
+.promise .px2 b { color: var(--navy); }
+.know { display: grid; gap: 8px; margin-top: 20px; }
+.know li {
+  list-style: none; background: var(--white); border-radius: 8px; padding: 12px 14px;
+  font-size: 12.5px; color: var(--navy); font-weight: 600; display: flex; gap: 9px;
+  align-items: flex-start; line-height: 1.7; border: 1px solid var(--line);
+}
+.know li::before { content: "◎"; color: var(--green); font-weight: 900; flex-shrink: 0; }
+
+/* ══════════ ⑯ FAQ ══════════ */
+.faq { background: var(--white); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 9px; overflow: hidden; }
+.faq summary {
+  font-size: 13px; font-weight: 700; color: var(--navy); padding: 14px 16px; cursor: pointer;
+  display: flex; gap: 9px; align-items: flex-start; list-style: none; line-height: 1.65;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::before { content: "Q"; color: var(--gold-d); font-weight: 900; flex-shrink: 0; }
+.faq summary::after { content: "＋"; margin-left: auto; color: var(--muted); font-size: 14px; flex-shrink: 0; transition: transform .25s; }
+.faq[open] summary::after { transform: rotate(45deg); }
+.faq .fa { font-size: 12px; color: var(--muted); padding: 0 16px 15px 38px; line-height: 1.9; }
+
+/* ══════════ ⑰ 会社 ══════════ */
+.corp { display: grid; gap: 11px; }
+.corp-box { background: var(--white); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+.corp-box .cn2 { font-size: 13.5px; font-weight: 800; color: var(--gold-d); margin-bottom: 5px; }
+.corp-box .cx { font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+.corp-logo { max-width: 148px; margin: 0 auto 20px; }
+
+#ft { background: var(--navy); color: rgba(255,255,255,.5); padding: 26px 20px 30px; text-align: center; font-size: 10.5px; line-height: 1.85; }
+
+/* ══════════ スティッキーCTA（スマホ用） ══════════ */
+#sticky {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(115%);
+  width: 100%; max-width: 480px; z-index: 1000;
+  background: rgba(255,255,255,.97); backdrop-filter: blur(10px);
+  border-top: 1px solid var(--line); box-shadow: 0 -4px 20px rgba(60,50,35,.14);
+  padding: 9px 10px calc(9px + env(safe-area-inset-bottom, 0px));
+  display: flex; gap: 8px; transition: transform .38s cubic-bezier(.22,1,.36,1);
+}
+#sticky.show { transform: translateX(-50%) translateY(0); }
+#sticky a { border-radius: 6px; text-align: center; font-weight: 800; padding: 11px 4px; font-size: 12.5px; line-height: 1.3; }
+#sticky .s-line { flex: 1; background: var(--linegr); color: #fff; }
+#sticky .s-main { flex: 2; background: linear-gradient(180deg, #d9bc86, var(--gold)); color: #3b2f16; position: relative; overflow: hidden; }
+#sticky .s-main u { display: block; font-size: 9px; font-weight: 600; text-decoration: none; opacity: .75; }
+
+/* ══════════ PC用 サイドCTAカード ══════════ */
+#pcCta {
+  display: none; position: fixed; z-index: 1000;
+  top: 50%; right: 28px; transform: translateY(-50%) translateX(30px);
+  width: 258px; background: var(--white); border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(60,50,35,.24); border: 1px solid var(--line);
+  overflow: hidden; opacity: 0; transition: opacity .4s ease, transform .4s cubic-bezier(.22,1,.36,1);
+  pointer-events: none;
+}
+#pcCta.show { opacity: 1; transform: translateY(-50%) translateX(0); pointer-events: auto; }
+#pcCta .pc-hd {
+  background: var(--navy); color: #fff; padding: 13px 14px 12px; text-align: center; position: relative;
+}
+#pcCta .pc-hd .pl { font-size: 10px; letter-spacing: .12em; color: var(--gold); font-weight: 700; }
+#pcCta .pc-hd .pt4 { font-size: 15px; font-weight: 800; line-height: 1.45; margin-top: 3px; }
+#pcCta .pc-badge {
+  position: absolute; top: -12px; right: -10px; width: 62px; height: 62px; border-radius: 50%;
+  background: var(--gold); color: #3b2f16; font-size: 10px; font-weight: 900; line-height: 1.25;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,.25); animation: bob 2.6s ease-in-out infinite;
+}
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@media (prefers-reduced-motion: reduce) { #pcCta .pc-badge { animation: none; } }
+#pcCta .pc-bd { padding: 14px; }
+#pcCta .pc-merit { list-style: none; margin-bottom: 13px; }
+#pcCta .pc-merit li {
+  font-size: 11px; color: var(--navy); padding: 4px 0; display: flex; gap: 7px; align-items: flex-start; line-height: 1.55;
+}
+#pcCta .pc-merit li::before { content: "✓"; color: var(--green); font-weight: 900; flex-shrink: 0; }
+#pcCta .btn { padding: 13px 8px; font-size: 13.5px; border-radius: 6px; }
+#pcCta .btn .sm { font-size: 9.5px; }
+#pcCta .pc-close {
+  position: absolute; top: 6px; left: 6px; width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(255,255,255,.22); color: #fff; border: none; font-size: 13px; cursor: pointer; line-height: 1;
+}
+
+/* ══════════ トップへ戻る ══════════ */
+#toTop {
+  position: fixed; z-index: 999; right: 14px; bottom: 86px;
+  width: 42px; height: 42px; border-radius: 50%; background: var(--white);
+  border: 1px solid var(--line); box-shadow: 0 3px 12px rgba(60,50,35,.18);
+  color: var(--navy); font-size: 16px; cursor: pointer; display: none;
+  align-items: center; justify-content: center; font-family: inherit;
+}
+#toTop.show { display: flex; }
+
+/* ══════════ モーダル ══════════ */
+.ov-m { display: none; position: fixed; inset: 0; z-index: 4000; background: rgba(30,26,18,.7); align-items: center; justify-content: center; padding: 20px; }
+.ov-m.show { display: flex; }
+.mbox { background: #fff; border-radius: 10px; max-width: 400px; width: 100%; max-height: 86vh; overflow-y: auto; position: relative; }
+.mclose { position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border-radius: 50%; background: rgba(0,0,0,.5); color: #fff; border: none; font-size: 16px; cursor: pointer; z-index: 5; }
+.mbox .mimg { aspect-ratio: 1/1; object-fit: contain; background: var(--cream); padding: 20px; width: 100%; }
+.mbox .mbd { padding: 18px 20px 22px; }
+.mbox .mcat { font-size: 11px; color: var(--gold-d); font-weight: 800; }
+.mbox .mnm { font-size: 17px; font-weight: 800; color: var(--navy); margin: 3px 0 5px; }
+.mbox .mpr { font-size: 15px; font-weight: 800; color: var(--navy); margin-bottom: 12px; }
+.mbox .mpr small { font-size: 10px; color: var(--muted); font-weight: 400; }
+.mbox .mdc { font-size: 12.5px; color: var(--muted); line-height: 1.85; margin-bottom: 14px; }
+.mbox .mft { list-style: none; }
+.mbox .mft li { font-size: 12px; color: var(--text); padding: 8px 0; border-top: 1px solid var(--line); display: flex; gap: 8px; line-height: 1.65; }
+.mbox .mft li::before { content: "✓"; color: var(--gold-d); font-weight: 900; flex-shrink: 0; }
+.mbox .mcta { display: block; text-align: center; margin-top: 16px; background: var(--navy); color: #fff; padding: 13px; border-radius: 6px; font-size: 13px; font-weight: 800; }
+
+/* ══════════ PC（768px以上） ══════════ */
+@media (min-width: 768px) {
+  body { background: none; }
+  #bg-deco { display: block; }
+  #wrap { box-shadow: 0 0 60px rgba(60,50,35,.22); padding-bottom: 0; }
+  #sticky { display: none; }       /* スマホ用の下部バーはPCでは出さない */
+  #pcCta { display: block; }        /* 代わりに右サイドの固定CTAカードを出す */
+  #toTop { right: calc(50% - 240px - 62px); bottom: 28px; }
+  .sec { padding: 56px 30px; }
+  .cta-block { padding: 44px 30px; }
+  .cta-block.big { padding: 56px 30px; }
+  #fv .inner { padding: 24px 30px 34px; }
+  .sec-ttl { font-size: 23px; }
+  .anno-switch { left: 22px; transform: none; }
+}
+@media (min-width: 1180px) {
+  #toTop { right: calc(50% - 240px - 74px); }
+}
+</style>
+</head>
+<body>
+
+<div id="bg-deco">
+  <div class="bg-ttl">SKINIMALIST — AQUA-LESS SKINCARE FOR SALON</div>
+  <div class="bg-ttl2">FOR SALON OWNER — 店販という、もう一つの柱を。</div>
+</div>
+
+<div id="prog"></div>
+<button class="anno-switch" id="annoSw" onclick="toggleAnno()">🔍 注釈 表示中（タップでOFF）</button>
+
+<div id="wrap">
+
+  <!-- ══════════ 画像仕様サマリー ══════════ -->
+  <details id="spec-summary">
+    <summary>📐 画像仕様・出典一覧（デザイナー／クライアント確認用）</summary>
+    <p class="note">
+      画像は<b style="color:#fcd9a0">現行LPの実画像を仮配置</b>し、右上バッジに推奨サイズを表示しています（バッジをタップで詳細）。<br>
+      サイズ規約は参考サイト（midacy.jp）に準拠し<b style="color:#fcd9a0">全幅画像＝幅720px</b>で統一。<br>
+      <b style="color:#c084fc">紫の枠</b>＝現行LPに無い新規提案の内容とその根拠、<b style="color:#fcd9a0">黄色の枠</b>＝クライアント確認待ちの項目です。
+    </p>
+    <table>
+      <tr><th>画像</th><th>現行実寸</th><th>推奨</th><th>区分・依頼内容</th></tr>
+      <tr><td>top_sp.jpg</td><td>1400×2192</td><td>720×1240</td><td><span class="s-keep">流用</span> FV背景。白ベース化に伴いオーバーレイを明るくしたため、<b>被写体が上1/3に来る構図</b>でトリミング。WebP化推奨</td></tr>
+      <tr><td>concern_sp.jpg</td><td>1400×1519</td><td>720×540</td><td><span class="s-res">仮配置</span> <b>商品集合カットとして仮置き。</b>本番は4製品を並べた横位置の集合写真を新規撮影推奨（下記）</td></tr>
+      <tr><td>商品集合写真（新規）</td><td>―</td><td>720×540</td><td><span class="s-new">新規撮影</span> 4製品を横位置で並べた集合カット。白〜ベージュ背景・自然光。LPの主役ビジュアルになる最重要カット</td></tr>
+      <tr><td>aqualess_exp_sp.png</td><td>258×1476</td><td>―</td><td><span class="s-del">不使用</span> <b>平均色がほぼ黒（RGB 5,3,3）・白領域0%で、白ベースの本案と不整合。</b>縦横比も極端なため商品集合写真に差し替え</td></tr>
+      <tr><td>aqualess_point1〜3.png</td><td>800×806</td><td>288×288</td><td><span class="s-keep">流用</span> 正方形アイコンとして縮小配置</td></tr>
+      <tr><td>product1〜4.png</td><td class="s-res">393×573／573×563／490×509／568×589</td><td>800×800</td><td><span class="s-res">要リサイズ</span> <b>4点の縦横比がバラバラでグリッドが不揃いになる。正方形800×800pxに統一し余白を揃えて再書き出し</b></td></tr>
+      <tr><td>concern1〜4.png</td><td>758×432</td><td>720×410</td><td><span class="s-keep">流用</span> そのまま使用</td></tr>
+      <tr><td>logo.png</td><td>1394×268</td><td>600×115</td><td><span class="s-keep">流用</span> ヘッダー・会社概要で再利用</td></tr>
+      <tr><td>販促ツール実物</td><td>―</td><td>720×405</td><td><span class="s-new">新規撮影</span> POP・什器・カウンセリングシートの実物。1〜3点</td></tr>
+      <tr><td>導入サロンの声</td><td>―</td><td>200×200</td><td><span class="s-new">新規</span> 店舗写真 or 担当者写真×3点</td></tr>
+      <tr><td>btn_answer1〜4／title_point1〜4／link1〜4 ほか</td><td>―</td><td>―</td><td><span class="s-del">廃止</span> 文字焼込み画像はすべてHTMLテキスト・CSSボタン化</td></tr>
+      <tr><td>SNS広告用画像</td><td>―</td><td>1080×1080</td><td><span class="s-new">新規</span> 月1点・新東通信にて制作（広告費内2万円分）</td></tr>
+    </table>
+  </details>
+
+  <header id="hd">
+    <div class="logo">Skini<span>malist</span></div>
+    <a href="#contact" class="hd-btn">無料相談</a>
+  </header>
+
+  <!-- ══════════ ① FV ══════════ -->
+  <section id="fv" class="img-slot">
+    <div class="spec" onclick="this.classList.toggle('open')">
+      <span class="badge badge-keep">流用</span>720×1240px
+      <div class="spec-detail">
+        現行 top_sp.jpg（1400×2192）を流用。白ベース化に伴いオーバーレイを明るくしたため、<b>被写体が上1/3に収まる構図</b>で720×1240pxにトリミングし直してください。下2/3にはコピーが乗ります。WebP変換で50%以上軽量化を推奨。
+      </div>
+    </div>
+    <div class="bg"></div>
+    <div class="ov"></div>
+    <div class="inner">
+      <div class="eyebrow">FOR SALON OWNER</div>
+      <h1>施術の手を止めずに、<br>売上をもう一段。</h1>
+      <div class="big"><span class="num-ct" data-t="330">330</span><small>万円</small></div>
+      <div class="big-sub">取扱サロンの<b>月間店販売上</b>平均</div>
+      <a href="#contact" class="btn btn-main shine">
+        オンライン無料相談を予約する
+        <span class="sm">所要30分／その場での契約はありません</span>
+      </a>
+      <a href="https://lin.ee/7pIQNeL" class="btn btn-line">
+        LINEで資料を受け取る
+        <span class="sm">最短10秒・登録のみでOK</span>
+      </a>
+      <p class="fv-note">
+        サイエンステクノロジー × メディカル着想スキンケア「Skinimalist」<br>
+        業界初 Aqua-less®︎処方／エステサロン専売
+      </p>
+    </div>
+  </section>
+
+  <!-- ══════════ ② KPI ══════════ -->
+  <section id="kpi">
+    <div class="grid">
+      <div class="cell"><div class="n"><span class="num-ct" data-t="15">15</span><u>店舗</u></div><div class="l">1年間で拡大した<br>取扱サロン数</div></div>
+      <div class="cell"><div class="n"><span class="num-ct" data-t="89">89</span><u>%</u></div><div class="l">商品購入者の<br>平均リピート率</div></div>
+      <div class="cell"><div class="n"><span class="num-ct" data-t="330">330</span><u>万円</u></div><div class="l">取扱サロンの<br>月間店販売上</div></div>
+      <div class="cell"><div class="n">6<u>:4</u></div><div class="l">店販 : 施術<br>の売上比率</div></div>
+    </div>
+    <p class="cap">※ 取扱サロンの実績平均値。導入時期・店舗規模により異なります。</p>
+  </section>
+
+  <!-- ══════════ ③ お悩み ══════════ -->
+  <section class="sec paper">
+    <p class="sec-tag reveal">Problem</p>
+    <h2 class="sec-ttl reveal">こんなお悩み、<br>ありませんか？</h2>
+    <div class="sec-bar reveal"></div>
+    <ul class="worry reveal">
+      <li>施術で精一杯。1日の対応人数に限界を感じている</li>
+      <li>カウンセリングにじっくり時間が取れない</li>
+      <li>施術の習得や、スタッフ教育に時間とコストがかかる</li>
+      <li>毎月のキャンペーンのたびに、売上が読めず不安になる</li>
+    </ul>
+    <p class="worry-end reveal">そのお悩み、<br><mark>「店販の仕組み」</mark>で解決できます。</p>
+  </section>
+
+  <!-- ══════════ ④ 課題の再定義 ══════════ -->
+  <section class="sec white" id="why">
+    <p class="sec-tag reveal">Why Retail</p>
+    <h2 class="sec-ttl reveal">施術売上には、<br><em>必ず天井があります。</em></h2>
+    <div class="sec-bar reveal"></div>
+    <p class="sec-lead reveal">
+      施術売上は「スタッフ数 × 稼働時間」が上限。<br>
+      人を増やさずに売上を伸ばせる唯一のレバーが、店販です。
+    </p>
+    <div class="bars reveal">
+      <div class="bar-row">
+        <div class="bar-lb"><span>施術売上</span><span>人時に比例＝天井あり</span></div>
+        <div class="bar-tr"><div class="bar-fl cap" data-w="58" style="width:58%"></div></div>
+        <div class="bar-note">スタッフを増やさない限り、これ以上は伸びない</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-lb"><span>店販売上</span><span>リピートで積み上がる</span></div>
+        <div class="bar-tr"><div class="bar-fl grow" data-w="94" style="width:94%"></div></div>
+        <div class="bar-note">リピート顧客が増えるほど、施術枠を使わずに売上が増大</div>
+      </div>
+    </div>
+    <div class="insight reveal">
+      Skinimalist導入サロンは<br>
+      <b>店販 : 施術 = 6 : 4</b><br>
+      の売上構成を実現しています。
+    </div>
+  </section>
+
+  <!-- ══════════ ⑤ コンセプト（商品集合写真に差し替え） ══════════ -->
+  <section class="sec paper">
+    <p class="sec-tag reveal">Aqua-less®︎ Concept</p>
+    <h2 class="sec-ttl reveal">水までも使わず、<br>必要成分だけを肌へ。</h2>
+    <div class="sec-bar reveal"></div>
+
+    <div class="img-slot hero-img reveal">
+      <div class="spec" onclick="this.classList.toggle('open')">
+        <span class="badge badge-res">仮配置</span>720×540px
+        <div class="spec-detail">
+          <b>ここは商品集合写真の枠です。</b>現在は現行LPの concern_sp.jpg（1400×1519／製品ラインナップ構成図）を仮置きしています。<br>
+          本番は<b>4製品を横位置で並べた集合カット（720×540px）を新規撮影</b>してください。白〜ベージュ背景・自然光・製品ラベルが読める寄りで。LPの主役ビジュアルになる最重要カットです。<br>
+          ※ 元の aqualess_exp_sp.png（258×1476）は平均色がほぼ黒・白領域0%で白ベースの本案と合わないため不使用としました。
+        </div>
+      </div>
+      <img src="https://fan.liberta.net/skinimalist/img/concern_sp.jpg" alt="Skinimalist 製品ラインナップ">
+    </div>
+
+    <p style="font-size:13.5px; color:var(--muted); line-height:1.95;" class="reveal">
+      ほとんどの化粧水は、主成分が「水」。広告されている美容成分は、実はごくわずかです。<br>
+      Skinimalistは水を一切使わない<b style="color:var(--navy)">Aqua-less®︎処方</b>。サロンで扱う業務用ラインと同じ発想の濃度を、お客様の毎日に届けます。
+    </p>
+    <div class="concept-badges reveal">
+      <span>業界初 Aqua-less®︎</span>
+      <span>美容成分100%</span>
+      <span>サロン専売</span>
+    </div>
+  </section>
+
+  <!-- ══════════ CTA-A ══════════ -->
+  <section class="cta-block">
+    <p class="ct">まずは<em>資料だけ</em>でも。</p>
+    <p class="cl">導入事例・価格条件をまとめた資料を<br>LINEですぐにお送りします。</p>
+    <a href="https://lin.ee/7pIQNeL" class="btn btn-line">
+      LINEで資料を受け取る<span class="sm">最短10秒・登録のみでOK</span>
+    </a>
+    <a href="#contact" class="btn btn-navy">
+      オンライン無料相談を予約する<span class="sm">所要30分／その場での契約はありません</span>
+    </a>
+  </section>
+
+  <!-- ══════════ ⑦ 3つの売れる ══════════ -->
+  <section class="sec white">
+    <p class="sec-tag reveal">3 Reasons</p>
+    <h2 class="sec-ttl reveal">「良い商品」ではなく<br><em>「売れる商品」</em>である理由</h2>
+    <div class="sec-bar reveal"></div>
+    <div class="pts">
+      <div class="pt reveal">
+        <div class="pt-hd"><i>01</i> “売れる”価格</div>
+        <div class="pt-bd">
+          <div class="img-slot ico">
+            <div class="spec" onclick="this.classList.toggle('open')" style="font-size:8px; padding:2px 5px; max-width:92%;">
+              <span class="badge badge-keep" style="font-size:7.5px;">流用</span>288px²
+              <div class="spec-detail">現行 aqualess_point1.png（800×806）を288×288pxに縮小。透過PNG維持。</div>
+            </div>
+            <img src="https://fan.liberta.net/skinimalist/img/aqualess_point1.png" alt="売れる価格">
+          </div>
+          <div>
+            <div class="pt-ttl">定価5,000円前後。<br>お客様の美容代を圧迫しない</div>
+            <div class="pt-tx">購入しやすくリピートしやすい価格帯。ライン使いの提案もしやすく、キャンペーンに頼らない安定した店販売上を生みます。</div>
+            <span class="pt-tag">アップセルしやすい</span><span class="pt-tag">値引き不要</span>
+          </div>
+        </div>
+      </div>
+      <div class="pt reveal">
+        <div class="pt-hd"><i>02</i> “売れる”顧客管理</div>
+        <div class="pt-bd">
+          <div class="ico"><img src="https://fan.liberta.net/skinimalist/img/aqualess_point2.png" alt="売れる顧客管理"></div>
+          <div>
+            <div class="pt-ttl">アイテムはわずか4つ。<br>悩み別に迷わず提案できる</div>
+            <div class="pt-tx">単品からライン提案への流れが自然につくれます。SKUが少ないため在庫予測・在庫管理の負担も最小限です。</div>
+            <span class="pt-tag">在庫リスク小</span><span class="pt-tag">提案が明確</span>
+          </div>
+        </div>
+      </div>
+      <div class="pt reveal">
+        <div class="pt-hd"><i>03</i> “売れる”接客</div>
+        <div class="pt-bd">
+          <div class="ico"><img src="https://fan.liberta.net/skinimalist/img/aqualess_point3.png" alt="売れる接客"></div>
+          <div>
+            <div class="pt-ttl">新人スタッフでもできる<br>「鉄則カウンセリング」</div>
+            <div class="pt-tx">一律・シンプルなコンセプトと販促サポート。説明が端的なので、お客様側から声がかかる導線をつくれます。</div>
+            <span class="pt-tag">教育コスト減</span><span class="pt-tag">人に依存しない</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ ⑧ 製品 ══════════ -->
+  <section class="sec paper">
+    <p class="sec-tag reveal">Line Up</p>
+    <h2 class="sec-ttl reveal">たった4アイテムで、<br>あらゆる肌悩みに。</h2>
+    <div class="sec-bar reveal"></div>
+    <div class="prods reveal">
+      <div class="prod">
+        <div class="img-slot ph">
+          <div class="spec" onclick="this.classList.toggle('open')" style="font-size:8px; padding:2px 5px;">
+            <span class="badge badge-res" style="font-size:7.5px;">要リサイズ</span>800px²
+            <div class="spec-detail"><b>4点すべて縦横比がバラバラ（393×573／573×563／490×509／568×589）でグリッドが不揃いになります。</b>正方形800×800px・余白を統一して再書き出しをお願いします。背景は白または透過。</div>
+          </div>
+          <img src="https://fan.liberta.net/skinimalist/img/product1.png" alt="エッセンスリッチローション">
+        </div>
+        <div class="in">
+          <div class="cat">水の無いローション</div>
+          <div class="nm">エッセンスリッチローション</div>
+          <div class="pr">¥4,800 <small>(税別)</small></div>
+          <div class="cc">弱みがあったらこれ1本</div>
+          <button class="db" onclick="openP(0)">詳細 ＋</button>
+        </div>
+      </div>
+      <div class="prod">
+        <div class="ph"><img src="https://fan.liberta.net/skinimalist/img/product2.png" alt="シラタマアンプル"></div>
+        <div class="in">
+          <div class="cat">ブライトニング美容液</div>
+          <div class="nm">シラタマアンプル</div>
+          <div class="pr">¥6,000 <small>(税別)</small></div>
+          <div class="cc">シミ・くすみ・色むらへ</div>
+          <button class="db" onclick="openP(1)">詳細 ＋</button>
+        </div>
+      </div>
+      <div class="prod">
+        <div class="ph"><img src="https://fan.liberta.net/skinimalist/img/product3.png" alt="ラディアンスピール"></div>
+        <div class="in">
+          <div class="cat">ふき取り不要の角質ケア</div>
+          <div class="nm">ラディアンスピール</div>
+          <div class="pr">¥4,200 <small>(税別)</small></div>
+          <div class="cc">毛穴・ニキビ・ごわつきに</div>
+          <button class="db" onclick="openP(2)">詳細 ＋</button>
+        </div>
+      </div>
+      <div class="prod">
+        <div class="ph"><img src="https://fan.liberta.net/skinimalist/img/product4.png" alt="グラナアンプル"></div>
+        <div class="in">
+          <div class="cat">エイジングケア美容液</div>
+          <div class="nm">グラナアンプル</div>
+          <div class="pr">¥6,500 <small>(税別)</small></div>
+          <div class="cc">しわ・たるみ・たるみ毛穴へ</div>
+          <button class="db" onclick="openP(3)">詳細 ＋</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="merit-strip reveal">
+      アイテムが4つだけだから、<b>在庫は最小限</b>。<br>それでいて<b>肌悩みは全方位</b>にカバーできます。
+    </div>
+
+    <div class="concerns reveal">
+      <div class="img-slot concern">
+        <div class="spec" onclick="this.classList.toggle('open')" style="font-size:8px; padding:2px 5px;">
+          <span class="badge badge-keep" style="font-size:7.5px;">流用</span>720×410
+          <div class="spec-detail">現行 concern1〜4.png（758×432）をそのまま使用。トリミング不要。</div>
+        </div>
+        <img src="https://fan.liberta.net/skinimalist/img/concern1.png" alt="乾燥・小じわ">
+        <div class="cp">乾燥・小じわ</div>
+      </div>
+      <div class="concern"><img src="https://fan.liberta.net/skinimalist/img/concern2.png" alt="敏感・炎症"><div class="cp">敏感・炎症</div></div>
+      <div class="concern"><img src="https://fan.liberta.net/skinimalist/img/concern3.png" alt="毛穴・トラブル"><div class="cp">毛穴・トラブル</div></div>
+      <div class="concern"><img src="https://fan.liberta.net/skinimalist/img/concern4.png" alt="くすみ"><div class="cp">くすみ</div></div>
+    </div>
+  </section>
+
+  <!-- ══════════ ⑨ シミュレーション ══════════ -->
+  <section class="sec white">
+    <p class="sec-tag reveal">Simulation</p>
+    <h2 class="sec-ttl reveal">実際、いくら残るのか。</h2>
+    <div class="sec-bar reveal"></div>
+    <p class="sec-lead reveal">月30名のお客様に、1人1品ご購入いただいた場合の試算です。</p>
+    <div class="sim reveal">
+      <div class="sim-hd">月間 店販シミュレーション（月30名想定）</div>
+      <div class="sim-bd">
+        <div class="sim-row"><span class="k">平均単価</span><span class="v">¥5,375</span></div>
+        <div class="sim-row"><span class="k">購入人数（月）</span><span class="v">30名</span></div>
+        <div class="sim-row"><span class="k">月間 店販売上</span><span class="v">¥161,250</span></div>
+        <div class="sim-row"><span class="k">仕入原価（卸掛率）</span><span class="v sim-q">要確認</span></div>
+        <div class="sim-row total"><span class="k">サロン粗利（月）</span><span class="v sim-q">要確認</span></div>
+      </div>
+    </div>
+
+    <div class="newnote">
+      <b>💡 新規提案：このセクションは現行LPにありません</b>
+      現行LPには価格（定価）の記載はありますが、<b>サロン側の粗利に関する情報は一切ありません。</b>
+      <span class="src">【追加を推奨する理由】読み手はサロン経営者＝仕入れる側です。B2Bの購買判断は「良い商品か」より「1本売って自店にいくら残るか」で決まります。ここが空欄のままだと、検討が相談前に止まります。平均単価¥5,375は現行LPの4製品定価の平均値から算出しています。</span>
+    </div>
+    <div class="todo">
+      <b>⚠ 要クライアント確認：収支条件</b>
+      <ul>
+        <li>卸値／掛率（例：定価の◯%）</li>
+        <li>最低発注ロット・初期費用の有無</li>
+        <li>返品・在庫引取の可否</li>
+      </ul>
+      開示が難しい場合は、本セクションを<b>「無料相談時に貴サロンの規模に合わせて個別試算します」</b>という訴求に差し替える案を推奨します。
+    </div>
+  </section>
+
+  <!-- ══════════ CTA-B ══════════ -->
+  <section class="cta-block dark">
+    <div class="cta-merit"><span>所要30分</span><span>オンライン完結</span><span>費用0円</span></div>
+    <p class="ct">貴サロンの規模で、<br><em>いくら残るか試算します。</em></p>
+    <p class="cl">導入費用・卸条件・他サロンの事例まで、<br>包み隠さずお答えします。</p>
+    <a href="#contact" class="btn btn-main shine">
+      オンライン無料相談を予約する<span class="sm">その場での契約・お申し込みはありません</span>
+    </a>
+    <a href="https://lin.ee/7pIQNeL" class="btn btn-line">LINEで資料だけ受け取る</a>
+  </section>
+
+  <!-- ══════════ ⑪ 導入サポート ══════════ -->
+  <section class="sec paper">
+    <p class="sec-tag reveal">Support</p>
+    <h2 class="sec-ttl reveal">「置いて終わり」には<br>させません。</h2>
+    <div class="sec-bar reveal"></div>
+    <p class="sec-lead reveal">導入後に売れるところまで、伴走します。</p>
+    <div class="sup reveal">
+      <div class="sup-item"><div class="no">1</div><div><div class="st">店頭販促ツール一式</div><div class="sx">POP・什器・リーフレット。お客様側から声をかけたくなる売場をつくります。</div></div></div>
+      <div class="sup-item"><div class="no">2</div><div><div class="st">鉄則カウンセリングシート</div><div class="sx">新人スタッフでもそのまま使える台本形式。属人化を防ぎます。</div></div></div>
+      <div class="sup-item"><div class="no">3</div><div><div class="st">SNS用クリエイティブ提供</div><div class="sx">Instagram投稿用の素材をご提供。サロン集客との連動が可能です。</div></div></div>
+      <div class="sup-item"><div class="no">4</div><div><div class="st">スタッフ向け導入研修</div><div class="sx">商品知識と販売トークを短時間でインストール。</div></div></div>
+    </div>
+    <div class="ph-slot reveal">
+      <div class="pt2">📷 販促ツール実物写真</div>
+      <div class="px">推奨 720×405px ／ 1〜3点<br>POP・什器・カウンセリングシートを並べた俯瞰カット</div>
+    </div>
+    <div class="newnote">
+      <b>💡 一部新規：4項目の内訳は推定です</b>
+      現行LPには<b>「販促サポート」「鉄則カウンセリング」という語は登場します</b>が、具体的に何が提供されるかの内訳は書かれていません。上記4項目はその語から推定して構成した<b>仮テキスト</b>です。
+      <span class="src">【追加を推奨する理由】「導入したが売れずに在庫が残る」がサロン側の最大の恐怖です。支援の中身を具体物で示すと、この不安を直接打ち消せます。</span>
+    </div>
+    <div class="todo">
+      <b>⚠ 要クライアント確認</b>
+      実際の提供内容・名称をアフラ様にご確認のうえ確定してください。あわせて販促ツールの実物写真をご手配ください（現物があるだけで信頼度が大きく変わります）。
+    </div>
+  </section>
+
+  <!-- ══════════ ⑫ 導入サロンの声 ══════════ -->
+  <section class="sec white">
+    <p class="sec-tag reveal">Voice</p>
+    <h2 class="sec-ttl reveal">導入サロンの声</h2>
+    <div class="sec-bar reveal"></div>
+    <div class="voices reveal">
+      <div class="voice">
+        <div class="vh"><div class="av">👤</div><div><div class="vn">◯◯サロン様（東京都・1名経営）</div><div class="vm">導入◯ヶ月／フェイシャル専門</div></div></div>
+        <div class="vt">「（導入前の課題／導入の決め手／導入後の変化を3〜4行で。数字が入ると効果が跳ね上がります）」</div>
+        <div class="vr">店販売上 <b>◯◯万円 → ◯◯万円</b></div>
+      </div>
+      <div class="voice">
+        <div class="vh"><div class="av">👤</div><div><div class="vn">◯◯サロン様（大阪府・スタッフ3名）</div><div class="vm">導入◯ヶ月／痩身・フェイシャル</div></div></div>
+        <div class="vt">「（スタッフ教育の観点でのコメントがあると、教育コストを懸念する経営者に刺さります）」</div>
+        <div class="vr">リピート率 <b>◯◯%</b></div>
+      </div>
+    </div>
+    <div class="newnote">
+      <b>💡 新規提案：このセクションは現行LPにありません</b>
+      現行LPには「1年で15店舗拡大」という数字はありますが、<b>個別のサロンの声・導入事例は掲載されていません。</b>
+      <span class="src">【追加を推奨する理由】B2Bのリード獲得では、メーカー側の主張より<b>同業者の実証</b>が圧倒的に強く効きます。「自分と同じ規模のサロンが成功している」と分かることが、相談予約の最後のひと押しになります。</span>
+    </div>
+    <div class="todo">
+      <b>⚠ 要クライアント確認：導入サロンの声 3件（最優先）</b>
+      <ul>
+        <li>店名（イニシャル可）・エリア・店舗規模（スタッフ数）</li>
+        <li>導入前の課題／導入の決め手／導入後の変化</li>
+        <li><b>導入前後の店販売上の数字</b>（これが最重要）</li>
+        <li>写真（顔出し不可の場合は店内写真で代替可・200×200px）</li>
+      </ul>
+      掲載許諾の取得もあわせてご確認ください。
+    </div>
+  </section>
+
+  <!-- ══════════ ⑬ 導入までの流れ ══════════ -->
+  <section class="sec paper">
+    <p class="sec-tag reveal">Flow</p>
+    <h2 class="sec-ttl reveal">ご相談から導入までの流れ</h2>
+    <div class="sec-bar reveal"></div>
+    <p class="sec-lead reveal">お問い合わせのあと、何が起きるかを明示します。</p>
+    <div class="flow reveal">
+      <div class="flow-step"><div class="ln"></div><div class="no">1</div><div><div class="ft">お問い合わせ</div><div class="fx">フォームまたはLINEから。1営業日以内にご返信します。</div><span class="fd">所要 1分</span></div></div>
+      <div class="flow-step"><div class="ln"></div><div class="no">2</div><div><div class="ft">オンライン無料相談</div><div class="fx">貴サロンの状況をお伺いし、収支の個別試算と他サロンの事例をご案内します。</div><span class="fd">所要 30分</span></div></div>
+      <div class="flow-step"><div class="ln"></div><div class="no">3</div><div><div class="ft">サンプル・条件のご案内</div><div class="fx">実際の製品をお試しいただき、導入プラン・価格条件をご提示します。</div><span class="fd">所要 ◯日 ※要確認</span></div></div>
+      <div class="flow-step"><div class="ln"></div><div class="no">4</div><div><div class="ft">ご導入・販促サポート開始</div><div class="fx">販促ツール一式の納品と、スタッフ向け導入研修を実施します。</div><span class="fd">申込から ◯日で納品 ※要確認</span></div></div>
+    </div>
+    <div class="newnote">
+      <b>💡 新規提案：このセクションは現行LPにありません</b>
+      現行LPには問い合わせ導線（LINE・フォーム）はありますが、<b>その後どうなるかの説明が一切ありません。</b>
+      <span class="src">【追加を推奨する理由】4/30の商談で挙がった「問い合わせの多くがサンプル目当ての一般ユーザー」という課題の裏返しで、本命であるサロン経営者ほど「連絡したら営業されるのでは」と警戒して押せません。先の展開を示すことがハードルを下げます。</span>
+    </div>
+    <div class="todo">
+      <b>⚠ 要クライアント確認：所要期間</b>
+      STEP3・4の日数をご確認ください。<b>「申込から◯日で納品」</b>が明記できると検討スピードが上がります。
+    </div>
+  </section>
+
+  <!-- ══════════ ⑭ 宣言 ══════════ -->
+  <section class="sec cream">
+    <p class="sec-tag reveal">Our Promise</p>
+    <h2 class="sec-ttl reveal">相談したら、<br>契約を迫られる…？</h2>
+    <div class="sec-bar reveal"></div>
+    <div class="promise reveal">
+      <div class="pi">🤝</div>
+      <div class="pt3">その場での契約は、<br>一切ありません。</div>
+      <div class="px2">
+        オンライン無料相談は<b>情報提供が目的</b>です。<br>
+        導入を急かすことも、しつこくご連絡することもありません。<br>
+        「他社と比較したい」「今期は見送りたい」も、そのままお伝えください。
+      </div>
+    </div>
+    <p style="text-align:center; font-size:13.5px; font-weight:800; color:var(--navy); margin:26px 0 0;" class="reveal">30分の相談で、わかること</p>
+    <ul class="know reveal">
+      <li>貴サロンの規模でいくら粗利が残るか（個別試算）</li>
+      <li>同規模・同エリアのサロンがどう売っているか</li>
+      <li>最低ロット・初期費用・在庫リスクの実際</li>
+      <li>スタッフ教育にどれくらい時間がかかるか</li>
+    </ul>
+    <div class="newnote">
+      <b>💡 新規提案：このセクションは現行LPにありません</b>
+      <span class="src">【追加を推奨する理由】現行LPのCTAは「オンライン無料相談」ですが、無料相談で何が得られ、何をされないのかが書かれていません。B2Bでは「営業されたくない」が最大の心理的障壁のため、CTA直前にこれを明示するのが定石です。</span>
+    </div>
+  </section>
+
+  <!-- ══════════ CTA-C（メイン） ══════════ -->
+  <section class="cta-block dark big" id="contact">
+    <div class="cta-merit"><span>所要30分</span><span>オンライン完結</span><span>費用0円</span><span>契約強要なし</span></div>
+    <p class="ct">まずは、話を<br><em>聞いてみませんか。</em></p>
+    <p class="cl">導入への不安・費用感・他サロンの事例まで、<br>オンラインで何でもお答えします。</p>
+    <a href="#contact" class="btn btn-main shine">
+      オンライン無料相談を予約する<span class="sm">1営業日以内にご連絡します</span>
+    </a>
+    <a href="https://lin.ee/7pIQNeL" class="btn btn-line">
+      LINEで資料を受け取る<span class="sm">最短10秒・登録のみでOK</span>
+    </a>
+    <p class="cn">※ 個人情報は厳重に管理し、第三者への提供は一切行いません</p>
+    <div class="todo" style="text-align:left; margin-top:22px;">
+      <b>⚠ 実装メモ：フォームの設置</b>
+      本ワイヤーでは相談ボタンをアンカーにしています。実装時は<b>同一ページ内にSkinimalistブランドの入力フォームを直接設置</b>し、現行の外部Googleフォーム（forms.gle）への遷移は全廃してください。<br>
+      現行LPで最大の離脱要因になっている「別ブランド（be 10）フォームへの遷移」を解消する箇所です。
+    </div>
+  </section>
+
+  <!-- ══════════ ⑯ FAQ ══════════ -->
+  <section class="sec white">
+    <p class="sec-tag reveal">FAQ</p>
+    <h2 class="sec-ttl reveal">よくあるご質問</h2>
+    <div class="sec-bar reveal"></div>
+    <div class="reveal">
+      <details class="faq"><summary>最低発注ロットや初期費用はありますか？</summary>
+        <div class="fa">無料相談の際に、貴サロンの規模に合わせた導入プランをご案内します。<span class="sim-q">※具体的な条件は要確認</span></div></details>
+      <details class="faq"><summary>売れ残った場合、在庫リスクはありますか？</summary>
+        <div class="fa">アイテムが4つのみのため在庫は最小限に抑えられます。返品・引取条件については無料相談時にご説明します。<span class="sim-q">※返品可否は要確認</span></div></details>
+      <details class="faq"><summary>スタッフへの教育に時間はかかりますか？</summary>
+        <div class="fa">シンプルなアイテム構成と、そのまま使える「鉄則カウンセリングシート」をご提供しているため、新人スタッフでも短時間で販売トークを習得できます。導入時の研修も実施します。</div></details>
+      <details class="faq"><summary>近隣のサロンにも卸されますか？</summary>
+        <div class="fa"><span class="sim-q">※テリトリー制の有無を要確認。</span>競合サロンへの卸方針は、経営者が導入前に必ず気にする項目のため明記を推奨します。</div></details>
+      <details class="faq"><summary>今使っている他社商材と併売できますか？</summary>
+        <div class="fa"><span class="sim-q">※併売可否を要確認。</span>「今の商材をやめないと入れられない」という誤解が離脱要因になるため、明記を推奨します。</div></details>
+      <details class="faq"><summary>相談したら契約を迫られませんか？</summary>
+        <div class="fa">いいえ。オンライン無料相談は情報提供が目的です。その場でのご契約・お申し込みはございません。導入を急かすことも一切ありません。</div></details>
+    </div>
+
+    <div class="newnote">
+      <b>💡 新規提案：FAQセクション自体が現行LPにありません</b>
+      現行LPを確認したところ、<b>FAQセクションは存在せず、「最低ロット・初期費用」「返品可否」「テリトリー制」「他社商材との併売可否」に触れた記載も一切ありませんでした。</b>上記6問はすべて新規提案です。
+      <span class="src">
+        【追加を推奨する理由】いずれもサロン経営者が仕入れを決める前に必ず確認する条件です。LPに書かれていないと「問い合わせて聞くしかない」＝面倒だと判断され、その手前で離脱します。逆に先回りして答えておくと、相談予約の時点で検討が進んだ状態になり、商談の質も上がります。<br>
+        なお4/30の商談では「問い合わせの多くがサンプル目当ての一般ユーザーでサロンではない」という課題が挙がっていました。これらB2B固有の条件を明示することは、<b>一般ユーザーをふるい落としサロン経営者だけを残すフィルター</b>としても機能します。
+      </span>
+    </div>
+    <div class="todo">
+      <b>⚠ 要クライアント確認：FAQ回答原稿</b>
+      <span style="color:#ea580c; font-weight:700;">オレンジ表記</span>の4項目は回答が未確定です。あわせて記載する効能表現の<b>薬機法チェック</b>もご確認ください。
+    </div>
+  </section>
+
+  <!-- ══════════ ⑰ 会社概要 ══════════ -->
+  <section class="sec paper">
+    <div class="img-slot corp-logo reveal">
+      <div class="spec" onclick="this.classList.toggle('open')" style="font-size:8px; padding:2px 5px;">
+        <span class="badge badge-keep" style="font-size:7.5px;">流用</span>600×115
+        <div class="spec-detail">現行 logo.png（1394×268）を600×115pxで書き出し。白ベースのため originalのまま使用可。</div>
+      </div>
+      <img src="https://fan.liberta.net/skinimalist/img/logo.png" alt="Skinimalist">
+    </div>
+    <p class="sec-tag reveal">Company</p>
+    <h2 class="sec-ttl reveal">2社の専門性が<br>生んだブランド</h2>
+    <div class="sec-bar reveal"></div>
+    <div class="corp reveal">
+      <div class="corp-box">
+        <div class="cn2">株式会社リベルタ</div>
+        <div class="cx">マーケティング・PR・販促設計を担当。サロン現場で「売れる」導線を熟知したノウハウを、販促ツールに反映しています。</div>
+      </div>
+      <div class="corp-box">
+        <div class="cn2">株式会社アフラ</div>
+        <div class="cx">コンセプト設計・処方開発・製造を担当するOEMメーカー。Aqua-less®︎など独自処方を自社で実現できる開発力が強みです。</div>
+      </div>
+    </div>
+    <div class="newnote">
+      <b>💡 一部新規：現行LPでは画像内の記載のみ</b>
+      2社体制（リベルタ＝“売れる”プロ／アフラ＝“売れる商品開発”のプロ）は現行LPの Point three に<b>画像として</b>掲載されています。ここではテキスト化し、独立セクションに格上げしました。
+      <span class="src">【格上げを推奨する理由】B2B取引では「どこの誰と取引するのか」が与信判断そのものです。画像内に埋もれている情報を、フッター直前の独立セクションとして読ませることで信頼を補強します。</span>
+    </div>
+    <div class="todo">
+      <b>⚠ 要クライアント確認：会社情報</b>
+      <b>所在地・代表者名・設立年・製造体制（自社工場／許可番号等）</b>の記載可否をご確認ください。
+    </div>
+  </section>
+
+  <!-- ══════════ CTA-D ══════════ -->
+  <section class="cta-block">
+    <p class="ct">最後に、もう一度。</p>
+    <p class="cl">施術枠に縛られない売上を、<br>今期のうちに。</p>
+    <a href="#contact" class="btn btn-navy shine">
+      オンライン無料相談を予約する<span class="sm">所要30分／費用0円／契約強要なし</span>
+    </a>
+  </section>
+
+  <footer id="ft">
+    <p>Skinimalist（スキニマリスト）</p>
+    <p style="margin-top:6px;">© Skinimalist by Afura Inc. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ══════════ スティッキーCTA（スマホ） ══════════ -->
+<div id="sticky">
+  <a href="https://lin.ee/7pIQNeL" class="s-line">LINE<br>資料請求</a>
+  <a href="#contact" class="s-main shine">オンライン無料相談<u>所要30分・費用0円</u></a>
+</div>
+
+<!-- ══════════ PC用サイドCTA ══════════ -->
+<aside id="pcCta">
+  <div class="pc-hd">
+    <button class="pc-close" onclick="closePcCta()" aria-label="閉じる">×</button>
+    <div class="pc-badge">費用<br>0円</div>
+    <div class="pl">FOR SALON OWNER</div>
+    <div class="pt4">まずは話を<br>聞いてみませんか</div>
+  </div>
+  <div class="pc-bd">
+    <ul class="pc-merit">
+      <li>所要30分・オンライン完結</li>
+      <li>その場での契約は一切なし</li>
+      <li>貴サロンの粗利を個別試算</li>
+    </ul>
+    <a href="#contact" class="btn btn-main shine">無料相談を予約する<span class="sm">1営業日以内にご連絡</span></a>
+    <a href="https://lin.ee/7pIQNeL" class="btn btn-line" style="margin-top:8px;">LINEで資料請求</a>
+  </div>
+</aside>
+
+<button id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="トップへ戻る">↑</button>
+
+<!-- ══════════ 製品モーダル ══════════ -->
+<div class="ov-m" id="pmodal" onclick="if(event.target===this) closeP()">
+  <div class="mbox">
+    <button class="mclose" onclick="closeP()">×</button>
+    <!-- src は openP() で設定する。src="" はページ自身への無駄なリクエストを起こすため置かない -->
+    <img class="mimg" id="m-img" alt="">
+    <div class="mbd">
+      <div class="mcat" id="m-cat"></div>
+      <div class="mnm" id="m-nm"></div>
+      <div class="mpr" id="m-pr"></div>
+      <p class="mdc" id="m-dc"></p>
+      <ul class="mft" id="m-ft"></ul>
+      <a href="#contact" class="mcta" onclick="closeP()">この商品について相談する →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── 注釈の一括ON/OFF ── */
+function toggleAnno() {
+  var off = document.body.classList.toggle('no-anno');
+  var b = document.getElementById('annoSw');
+  b.classList.toggle('off', off);
+  b.textContent = off ? '🔍 注釈 非表示（タップでON）' : '🔍 注釈 表示中（タップでOFF）';
+}
+
+/* ── 製品データ ── */
+var PRODUCTS = [
+  { img:'https://fan.liberta.net/skinimalist/img/product1.png', cat:'水の無いローション／美容液ローション',
+    nm:'エッセンスリッチローション', pr:'¥4,800（税別）',
+    dc:'水を一切使わない多機能オールインワンのとろみ美容液ローション。弱みがあったら、まずこの1本から。',
+    ft:['Aqua-less®︎処方・美容成分100%','多機能オールインワン','敏感肌にも対応できる人気No.1アイテム'] },
+  { img:'https://fan.liberta.net/skinimalist/img/product2.png', cat:'白玉点滴™美容液／ブライトニング',
+    nm:'シラタマアンプル', pr:'¥6,000（税別）',
+    dc:'シミ・くすみ・色むらへ。使うほどに実感が積み上がるブライトニング美容液です。',
+    ft:['シミ・くすみ・色むらに集中アプローチ','使うほど実感が積み上がる処方','単品からライン提案につなげやすい'] },
+  { img:'https://fan.liberta.net/skinimalist/img/product3.png', cat:'肌育ピーリング／ふき取り不要',
+    nm:'ラディアンスピール', pr:'¥4,200（税別）',
+    dc:'毛穴・ニキビ・ごわつきを、やさしく確実にケア。ふき取り不要で毎日の習慣にしやすい設計です。',
+    ft:['ふき取り不要で肌に負担が少ない','毛穴・ニキビ・ごわつきに対応','入門アイテムとして提案しやすい価格'] },
+  { img:'https://fan.liberta.net/skinimalist/img/product4.png', cat:'次世代リフトレチノール／エイジングケア',
+    nm:'グラナアンプル', pr:'¥6,500（税別）',
+    dc:'しわ・たるみ・たるみ毛穴へ。次世代型レチノールを配合したエイジングケア美容液です。',
+    ft:['次世代型レチノール配合','しわ・たるみ・たるみ毛穴に対応','客単価を引き上げるアップセル商材'] }
+];
+function openP(i) {
+  var p = PRODUCTS[i];
+  document.getElementById('m-img').src = p.img;
+  document.getElementById('m-cat').textContent = p.cat;
+  document.getElementById('m-nm').textContent  = p.nm;
+  document.getElementById('m-pr').textContent  = p.pr;
+  document.getElementById('m-dc').textContent  = p.dc;
+  document.getElementById('m-ft').innerHTML = p.ft.map(function(f){ return '<li>' + f + '</li>'; }).join('');
+  document.getElementById('pmodal').classList.add('show');
+}
+function closeP() { document.getElementById('pmodal').classList.remove('show'); }
+
+/* ── アニメーション基盤 ──
+   方針：演出は「スクロール監視1本」で完結させ、IntersectionObserverには依存しない。
+   IOやタイマーはバックグラウンドタブ等で抑制されることがあり、
+   それらに表示可否を委ねるとLPが真っ白になり得るため。
+   判定は毎回 getBoundingClientRect で行うので、状態のズレも起きない。 */
+var canAnim = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var revealEls = [], animBlocks = [];
+
+if (canAnim) {
+  document.body.classList.add('js-anim');
+  revealEls  = [].slice.call(document.querySelectorAll('.reveal'));
+  animBlocks = [].slice.call(document.querySelectorAll('#fv, #kpi, #why'));
+}
+
+/* 画面に入った要素を表示していく。処理済みは配列から外すので走査は軽くなる一方。 */
+function revealPass() {
+  var vh = window.innerHeight;
+  if (revealEls.length) {
+    revealEls = revealEls.filter(function(el) {
+      // 「トリガー線より上に来たら表示」。上限だけを見る点が重要で、
+      // r.bottom > 0 を条件に加えると、アンカー移動や高速スクロールで
+      // 画面上部を通り過ぎた要素が非表示のまま取り残される。
+      if (el.getBoundingClientRect().top < vh * 0.92) { el.classList.add('on'); return false; }
+      return true;
+    });
+  }
+  if (animBlocks.length) {
+    animBlocks = animBlocks.filter(function(el) {
+      var r = el.getBoundingClientRect();
+      var visible = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+      if (visible > 0 && visible > Math.min(r.height, vh) * 0.3) {
+        el.querySelectorAll('.num-ct').forEach(countUp);
+        el.querySelectorAll('.bar-fl').forEach(growBar);
+        return false;
+      }
+      return true;
+    });
+  }
+}
+
+/* 経過時間で進捗を決めるので、フレームが間引かれても必ず目標値に着地する。
+   また初期値を書き換えないため、rAFが一度も動かない環境では
+   HTMLに書かれた正しい数値がそのまま残る。 */
+function countUp(el) {
+  var target = +el.dataset.t;
+  if (!isFinite(target)) return;
+  var dur = 900, t0 = null;
+  requestAnimationFrame(function frame(ts) {
+    if (t0 === null) t0 = ts;
+    var p = Math.min((ts - t0) / dur, 1);
+    el.textContent = p < 1 ? Math.floor(target * p) : target;
+    if (p < 1) requestAnimationFrame(frame);
+  });
+}
+
+/* inline styleの幅には触れず、クラス付与だけで0→正解値のkeyframesを走らせる。 */
+function growBar(b) {
+  if (b.dataset.w) b.classList.add('growing');
+}
+
+/* ── CTA表示制御 ──
+   表示中のCTAブロックは毎回矩形から判定する（カウンタ方式のずれを防ぐ）。
+   スマホ＝下部バー／PC＝右サイドカード、と出し分ける。 */
+var bar    = document.getElementById('sticky');
+var pcCta  = document.getElementById('pcCta');
+var toTop  = document.getElementById('toTop');
+var prog   = document.getElementById('prog');
+var ctaBlocks = document.querySelectorAll('.cta-block');
+var pcCtaClosed = false;
+
+function ctaOnScreen() {
+  var vh = window.innerHeight;
+  for (var i = 0; i < ctaBlocks.length; i++) {
+    var r = ctaBlocks[i].getBoundingClientRect();
+    var visible = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+    if (visible > 0 && visible > r.height * 0.15) return true;
+  }
+  return false;
+}
+function closePcCta() { pcCtaClosed = true; pcCta.classList.remove('show'); }
+
+function sync() {
+  var vh = window.innerHeight;
+  var y = window.scrollY;
+  var passed = y > vh * 0.55;
+  var hide = ctaOnScreen();
+
+  bar.classList.toggle('show', passed && !hide);
+  pcCta.classList.toggle('show', passed && !hide && !pcCtaClosed);
+  toTop.classList.toggle('show', y > vh * 1.5);
+
+  var max = document.documentElement.scrollHeight - vh;
+  prog.style.width = (max > 0 ? Math.min(y / max * 100, 100) : 0) + '%';
+
+  revealPass();
+}
+
+var ticking = false;
+function onScroll() {
+  if (ticking) return;
+  ticking = true;
+  requestAnimationFrame(function() { sync(); ticking = false; });
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', onScroll, { passive: true });
+/* 画像読み込み後は高さが変わるため、load後にもう一度合わせる */
+window.addEventListener('load', sync);
+sync();
+
+/* 安全弁：スクリプトが途中で落ちても本文が隠れたままにならないよう、
+   エラー発生時は演出用クラスを外して全要素を可視に戻す。 */
+window.addEventListener('error', function() {
+  document.body.classList.remove('js-anim');
+});
+
+/* ── ページ内アンカーのスムーススクロール ── */
+document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    var t = document.querySelector(a.getAttribute('href'));
+    if (!t) return;
+    e.preventDefault();
+    t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+
+</body>
+</html>
